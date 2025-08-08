@@ -3,6 +3,7 @@
     "id": 1,
     "name": "Jane Austen",
     "birthYear": 1775,
+    "isHighlighted": true,
     "genres": ["Romance", "Social commentary"],
     "famousWorks": [
       { "title": "Pride and Prejudice", "year": 1813 },
