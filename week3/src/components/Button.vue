@@ -50,7 +50,7 @@ const handleClick = (event) => {
 
 // computed property to determine the button class based on props
 const buttonClass = computed(() => {
-  let classes = ['btn'] // Bootstrap 按钮基类
+  let classes = ['btn'] // Bootstrap base class
 
   // determine color class
   if (props.style === 'outlined') {
