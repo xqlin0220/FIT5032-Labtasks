@@ -38,6 +38,7 @@
                   type="checkbox"
                   class="form-check-input"
                   id="isAustralian"
+                  required
                   v-model="formData.isAustralian"
                 />
                 <label class="form-check-label" for="isAustralian">
@@ -51,6 +52,7 @@
                 class="form-select"
                 id="gender"
                 v-model="formData.gender"
+                required
               >
                 <option value="">Select</option>
                 <option value="male">Male</option>
@@ -68,6 +70,9 @@
               id="reason"
               rows="3"
               v-model="formData.reason"
+              required
+              minlength="10"
+              maxlength="200"
             ></textarea>
           </div>
 
