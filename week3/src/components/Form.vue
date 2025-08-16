@@ -101,7 +101,7 @@
             <button type="button" class="btn btn-secondary" @click="clearForm">Clear</button>
           </div>
 
-          <!-- Submitted cards -->
+          <!-- Submitted cards
           <div class="row mt-5" v-if="submittedCards.length">
             <div class="row g-3">
               <div
@@ -123,6 +123,20 @@
                 </div>
               </div>
             </div>
+          </div> -->
+          <!-- PrimeVue DataTable -->
+          <div class="d-flex justify-content-center mt-4" v-if="submittedCards.length">
+            <DataTable :value="submittedCards" class="mt-2">
+              <Column field="username" header="Username" />
+              <Column field="password" header="Password" />
+              <Column header="Australian Resident">
+                <template #body="{ data }">
+                  {{ data.isAustralian ? 'Yes' : 'No' }}
+                </template>
+              </Column>
+              <Column field="gender" header="Gender" />
+              <Column field="reason" header="Reason" />
+            </DataTable>
           </div>
         </form>
 
@@ -133,6 +147,8 @@
 
 <script setup>
 import { ref } from 'vue'
+import DataTable from 'primevue/datatable'
+import Column from 'primevue/column'
 
 const formData = ref({
   username: '',
@@ -193,16 +209,6 @@ const validatePassword = (blur) => {
   }
 }
 
-const validateResident = (blur) => {
-  if (!formData.value.isAustralian) {
-    if (blur) errors.value.isAustralian = 'Must confirm if you are Australian resident'
-    return false
-  } else {
-    errors.value.isAustralian = null
-    return true
-  }
-}
-
 const validateGender = (blur) => {
   if (!formData.value.gender) {
     if (blur) errors.value.gender = 'Please select gender'
@@ -229,7 +235,6 @@ const submitForm = () => {
   const valid =
     validateName(true) &
     validatePassword(true) &
-    validateResident(true) &
     validateGender(true) &
     validateReason(true)
 
