@@ -96,10 +96,10 @@ const name = ref('')
 
 const props = defineProps({
   label: { type: String, required: true },
-  color: { type: String, default: 'primary' }, // 'primary', 'success', 'danger'...
-  size: { type: String, default: 'medium' },   // 'small', 'medium', 'large'
+  color: { type: String, default: 'primary' },
+  size: { type: String, default: 'medium' },
   disabled: { type: Boolean, default: false },
-  style: { type: String, default: 'filled' }   // 'outlined' or 'filled'
+  style: { type: String, default: 'filled' }
 })
 
 const emit = defineEmits(['click'])
