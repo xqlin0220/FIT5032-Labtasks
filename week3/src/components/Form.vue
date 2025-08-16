@@ -171,13 +171,18 @@ const errors = ref({
 // Validation functions
 const validateName = (blur) => {
   const v = formData.value.username.trim()
-  if (!v || v.length < 3) {
-    if (blur) errors.value.username = 'Name must be at least 3 characters'
+  const re = /^[A-Za-z0-9_]{3,16}$/
+  if (!re.test(v)) {
+    if (blur) errors.value.username = 'Username must be 3–16 chars, letters/numbers/underscore only.'
     return false
-  } else {
-    errors.value.username = null
-    return true
   }
+  const exists = submittedCards.value.some(u => u.username.toLowerCase() === v.toLowerCase())
+  if (exists) {
+    if (blur) errors.value.username = 'This username has already been used.'
+    return false
+  }
+  errors.value.username = null
+  return true
 }
 
 const validatePassword = (blur) => {
@@ -221,21 +226,32 @@ const validateGender = (blur) => {
 
 const validateReason = (blur) => {
   const v = formData.value.reason.trim()
-  if (!v || v.length < 10) {
-    if (blur) errors.value.reason = 'Reason must be at least 10 characters'
+  const urlLike = /(https?:\/\/|www\.)/i.test(v)
+  const hasBanned = bannedWords.some(w => v.toLowerCase().includes(w))
+
+  if (v.length < 10 || v.length > 200) {
+    if (blur) errors.value.reason = 'Reason must be 10–200 characters'
     return false
-  } else {
-    errors.value.reason = null
-    return true
   }
+  if (urlLike) {
+    if (blur) errors.value.reason = 'Reason must not contain URLs'
+    return false
+  }
+  if (hasBanned) {
+    if (blur) errors.value.reason = 'Reason contains inappropriate words'
+    return false
+  }
+  errors.value.reason = null
+  return true
 }
 
 // handle form submission
 const submitForm = () => {
+  trimAll()
   const valid =
-    validateName(true) &
-    validatePassword(true) &
-    validateGender(true) &
+    validateName(true) &&
+    validatePassword(true) &&
+    validateGender(true) &&
     validateReason(true)
 
   if (!valid) return
@@ -253,6 +269,16 @@ const clearForm = () => {
     gender: ''
   }
 }
+
+// Banned words for reason validation
+const bannedWords = ['spam', 'fake', 'hack'];
+// delete the spaces
+const trimAll = () => {
+  formData.value.username = formData.value.username.trim();
+  formData.value.password = formData.value.password.trim();
+  formData.value.reason   = formData.value.reason.trim();
+};
+
 </script>
 
 <style scoped>
