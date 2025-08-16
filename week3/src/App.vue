@@ -1,11 +1,24 @@
 <script setup>
-// import JSON from './components/JSON.vue'
 import Form from './components/Form.vue'
+import Button from './components/Button.vue'
+
+const onClick = () => {
+  alert('Button clicked!')
+}
 </script>
 
 <template>
-  <!-- <JSON /> -->
   <Form />
+  <Button
+    label="Submit"
+    color="primary"
+    size="small"
+    :disabled="true"
+    style="outlined"
+    @click="onClick"
+  />
 </template>
-/* sdadasd */
-<style scoped></style>
+
+<style scoped>
+/* add style here */
+</style>
