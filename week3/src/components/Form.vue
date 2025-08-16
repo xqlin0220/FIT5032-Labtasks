@@ -2,7 +2,7 @@
   <div>
     <h1>User Information Form / Credentials</h1>
 
-    <form @submit.prevent="onSubmit">
+    <form class="form" @submit.prevent="onSubmit">
       <label for="username">Username:</label><br />
       <input id="username" name="username" type="text" v-model="form.username" /><br />
 
