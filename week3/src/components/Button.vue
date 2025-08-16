@@ -80,10 +80,19 @@ const buttonClass = computed(() => {
   >
     {{ label }}
   </button>
+  <div style="padding:24px; display: grid; gap: 12px; max-width: 360px;">
+    <Button label="Prime Button" icon="pi pi-check" />
+    <InputText v-model="name" placeholder="Your name" />
+  </div>
 </template>
 
 <script setup>
 import { computed } from 'vue'
+import { ref } from 'vue'
+import Button from 'primevue/button'
+import InputText from 'primevue/inputtext'
+
+const name = ref('')
 
 const props = defineProps({
   label: { type: String, required: true },
