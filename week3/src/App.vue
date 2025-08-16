@@ -1,10 +1,10 @@
 <script setup>
 import Form from './components/Form.vue'
-import Button from './components/Button.vue'
+// import Button from './components/Button.vue'
 
-const onClick = () => {
-  alert('Button clicked!')
-}
+// const onClick = () => {
+//   alert('Button clicked!')
+// }
 </script>
 
 <template>
@@ -19,7 +19,7 @@ const onClick = () => {
     @click="onClick"
   /> -->
 
-  <!--// challenge 2 -->
+  <!--// challenge 2
   <Button
       label="Submit"
       color="primary"
@@ -27,7 +27,7 @@ const onClick = () => {
       style="outlined"
       :disabled="false"
       @click="onClick"
-    />
+    /> -->
 </template>
 
 <style scoped>
