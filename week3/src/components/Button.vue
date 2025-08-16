@@ -1,147 +1,69 @@
+<!-- src/components/Button.vue -->
 <template>
-  <div class="container mt-5">
-    <div class="row">
-      <div class="col-md-8 offset-md-2">
-        <h1 class="text-center">User Information Form</h1>
-
-        <form @submit.prevent="submitForm">
-          <!-- Row: Username and Password -->
-          <div class="row mb-3">
-            <div class="col-md-6">
-              <label for="username" class="form-label">Username</label>
-              <input
-                type="text"
-                class="form-control"
-                id="username"
-                v-model="formData.username"
-              />
-            </div>
-            <div class="col-md-6">
-              <label for="password" class="form-label">Password</label>
-              <input
-                type="password"
-                class="form-control"
-                id="password"
-                v-model="formData.password"
-              />
-            </div>
-          </div>
-
-          <!-- Row: Checkbox and Dropdown -->
-          <div class="row mb-3">
-            <div class="col-md-6">
-              <div class="form-check">
-                <input
-                  type="checkbox"
-                  class="form-check-input"
-                  id="isAustralian"
-                  v-model="formData.isAustralian"
-                />
-                <label class="form-check-label" for="isAustralian">
-                  Australian Resident?
-                </label>
-              </div>
-            </div>
-            <div class="col-md-6">
-              <label for="gender" class="form-label">Gender</label>
-              <select
-                class="form-select"
-                id="gender"
-                v-model="formData.gender"
-              >
-                <option value="">Select</option>
-                <option value="male">Male</option>
-                <option value="female">Female</option>
-                <option value="other">Other</option>
-              </select>
-            </div>
-          </div>
-
-          <!-- Textarea: Reason -->
-          <div class="mb-3">
-            <label for="reason" class="form-label">Reason for joining</label>
-            <textarea
-              class="form-control"
-              id="reason"
-              rows="3"
-              v-model="formData.reason"
-            ></textarea>
-          </div>
-
-          <!-- Buttons -->
-          <div class="text-center">
-            <button type="submit" class="btn btn-primary me-2">Submit</button>
-            <button type="button" class="btn btn-secondary" @click="clearForm">Clear</button>
-          </div>
-
-          <!-- Submitted cards -->
-          <div class="row mt-5" v-if="submittedCards.length">
-            <div class="row g-3">
-              <div
-                class="col-12 col-md-6 col-lg-4"
-                v-for="(card, index) in submittedCards"
-                :key="index"
-              >
-                <div class="card h-100">
-                  <div class="card-header">User Information</div>
-                  <ul class="list-group list-group-flush">
-                    <li class="list-group-item">Username: {{ card.username }}</li>
-                    <li class="list-group-item">Password: {{ card.password }}</li>
-                    <li class="list-group-item">Australian Resident: {{ card.isAustralian ? 'Yes' : 'No' }}</li>
-                    <li class="list-group-item">Gender: {{ card.gender }}</li>
-                    <li class="list-group-item">Reason: {{ card.reason }}</li>
-                  </ul>
-                </div>
-              </div>
-            </div>
-          </div>
-        </form>
-
-      </div>
-    </div>
-  </div>
+  <button
+    :style="buttonStyle"
+    :disabled="disabled"
+    @click="handleClick"
+  >
+    {{ label }}
+  </button>
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { computed } from 'vue'
 
-const formData = ref({
-  username: '',
-  password: '',
-  isAustralian: false,
-  reason: '',
-  gender: ''
+const props = defineProps({
+  label: { type: String, required: true },
+  color: { type: String, default: 'primary' },
+  size: { type: String, default: 'medium' },
+  disabled: { type: Boolean, default: false },
+  style: { type: String, default: 'filled' }
 })
 
-const submittedCards = ref([])
+const emit = defineEmits(['click'])
 
-const submitForm = () => {
-  submittedCards.value.push({ ...formData.value })
-  clearForm()
+const handleClick = (event) => {
+  if (!props.disabled) {
+    emit('click', event)
+  }
 }
 
-const clearForm = () => {
-    formData.value.username = ''
-    formData.value.password = ''
-    formData.value.isAustralian = false
-    formData.value.reason = '',
-    formData.value.gender = ''
+const colors = {
+  primary: '#0d6efd',
+  success: '#198754',
+  danger: '#dc3545',
+  warning: '#ffc107',
+  secondary: '#6c757d'
 }
+
+const buttonStyle = computed(() => {
+  const baseColor = colors[props.color] || colors.primary
+  const sizeMap = {
+    small: '5px 10px',
+    medium: '8px 16px',
+    large: '12px 24px'
+  }
+
+  if (props.style === 'outlined') {
+    return {
+      backgroundColor: 'transparent',
+      border: `2px solid ${baseColor}`,
+      color: baseColor,
+      padding: sizeMap[props.size],
+      borderRadius: '6px',
+      cursor: props.disabled ? 'not-allowed' : 'pointer',
+      opacity: props.disabled ? 0.6 : 1
+    }
+  } else {
+    return {
+      backgroundColor: baseColor,
+      border: 'none',
+      color: 'white',
+      padding: sizeMap[props.size],
+      borderRadius: '6px',
+      cursor: props.disabled ? 'not-allowed' : 'pointer',
+      opacity: props.disabled ? 0.6 : 1
+    }
+  }
+})
 </script>
-
-<style scoped>
-.card {
-  border: 1px solid #ccc;
-  border-radius: 10px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-}
-.card-header {
-  background-color: #275FDA;
-  color: white;
-  padding: 10px;
-  border-radius: 10px 10px 0 0;
-}
-.list-group-item {
-  padding: 10px;
-}
-</style>
