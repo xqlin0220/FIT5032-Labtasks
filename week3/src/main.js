@@ -11,6 +11,12 @@ import 'primeicons/primeicons.css'
 
 const app = createApp(App)
 
-app.use(PrimeVue, { theme: { preset: Aura } })
+app.use(PrimeVue, {
+  theme: {
+    preset: Aura,
+    options:{darkModeSelector:''}
+  }
+}
+)
 
 app.mount('#app')
