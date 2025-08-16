@@ -1,50 +1,50 @@
 <template>
-  <div>
-    <h1>User Information Form / Credentials</h1>
+  <div class="container mt-5">
+    <div class="row">
+      <div class="col-md-8 offset-md-2">
+        <h1 class="text-center">User Information Form</h1>
+        <form>
+          <div class="row mb-3">
+            <div class="col-md-6">
+              <label for="username" class="form-label">Username</label>
+              <input type="text" class="form-control" id="username" />
+            </div>
+            <div class="col-md-6">
+              <label for="password" class="form-label">Password</label>
+              <input type="password" class="form-control" id="password" />
+            </div>
+          </div>
 
-    <form class="form" @submit.prevent="onSubmit">
-      <label for="username">Username:</label><br />
-      <input id="username" name="username" type="text" v-model="form.username" /><br />
+          <div class="row mb-3">
+            <div class="col-md-6">
+              <div class="form-check">
+                <input type="checkbox" class="form-check-input" id="isAustralian" />
+                <label class="form-check-label" for="isAustralian">
+                  Australian Resident?
+                </label>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <label for="gender" class="form-label">Gender</label>
+              <select class="form-select" id="gender">
+                <option value="male">Male</option>
+                <option value="female">Female</option>
+                <option value="other">Other</option>
+              </select>
+            </div>
+          </div>
 
-      <label for="password">Password:</label><br />
-      <input id="password" name="password" type="password" v-model="form.password" /><br />
+          <div class="mb-3">
+            <label for="reason" class="form-label">Reason for joining</label>
+            <textarea class="form-control" id="reason" rows="3"></textarea>
+          </div>
 
-      <label for="isAustralian">
-        <input id="isAustralian" name="isAustralian" type="checkbox" v-model="form.isAustralian" />
-        Australian Resident?
-      </label><br />
-
-      <label for="reason">Reason For Joining:</label><br />
-      <textarea id="reason" name="reason" rows="3" v-model="form.reason"></textarea><br />
-
-      <label for="gender">Gender</label><br />
-      <select id="gender" name="gender" v-model="form.gender">
-        <option value="" disabled>Select</option>
-        <option value="female">Female</option>
-        <option value="male">Male</option>
-        <option value="other">Other</option>
-      </select><br /><br />
-
-      <button type="submit">Submit</button>
-    </form>
+          <div class="text-center">
+            <button type="submit" class="btn btn-primary me-2">Submit</button>
+            <button type="button" class="btn btn-secondary">Clear</button>
+          </div>
+        </form>
+      </div>
+    </div>
   </div>
 </template>
-
-<script setup>
-import { reactive } from 'vue'
-
-const form = reactive({
-  username: '',
-  password: '',
-  isAustralian: false,
-  reason: '',
-  gender: ''
-})
-
-function onSubmit() {
-  console.log('Form submitted:', { ...form })
-  alert(`Submitted:\n${JSON.stringify(form, null, 2)}`)
-}
-</script>
-
-<style scoped></style>
