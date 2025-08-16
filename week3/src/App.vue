@@ -9,6 +9,7 @@ const onClick = () => {
 
 <template>
   <Form />
+  <!--// challenge 1
   <Button
     label="Submit"
     color="primary"
@@ -16,7 +17,17 @@ const onClick = () => {
     :disabled="true"
     style="outlined"
     @click="onClick"
-  />
+  /> -->
+
+  <!--// challenge 2 -->
+  <Button
+      label="Submit"
+      color="primary"
+      size="small"
+      style="outlined"
+      :disabled="false"
+      @click="onClick"
+    />
 </template>
 
 <style scoped>
