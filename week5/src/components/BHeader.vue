@@ -12,8 +12,20 @@
         <li class="nav-item">
           <router-link to="/about" class="nav-link" active-class="active">About</router-link>
         </li>
-        <li class="nav-item">
-          <router-link to="/login" class="nav-link" active-class="active">Login</router-link>
+        <li v-if="!isAuthenticated" class="nav-item">
+          <router-link
+            to="/login"
+            class="nav-link"
+            active-class="active"
+            exact-active-class="active"
+          >
+            Login
+          </router-link>
+        </li>
+
+        <li v-else class="nav-item d-flex align-items-center gap-2">
+          <span class="nav-link disabled">Hello, {{ currentUser }}</span>
+          <button class="btn btn-outline-danger btn-sm" @click="doLogout">Logout</button>
         </li>
       </ul>
     </header>
