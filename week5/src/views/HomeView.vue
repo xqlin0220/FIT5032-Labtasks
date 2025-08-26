@@ -9,7 +9,8 @@ const formData = ref({
   confirmPassword: '',
   isAustralian: false,
   reason: '',
-  gender: ''
+  gender: '',
+  suburb: ''
 })
 
 const submittedCards = ref([])
@@ -18,7 +19,8 @@ const submitForm = () => {
   validateName(true)
   validatePassword(true)
   validateConfirmPassword(true)
-  if (!errors.value.username && !errors.value.password && !errors.value.confirmPassword) {
+  validateSuburb(true)
+  if (!errors.value.username && !errors.value.password && !errors.value.confirmPassword && ! errors.value.suburb) {
     submittedCards.value.push({ ...formData.value })
     clearForm()
   }
@@ -31,7 +33,8 @@ const clearForm = () => {
     confirmPassword: '',
     isAustralian: false,
     reason: '',
-    gender: ''
+    gender: '',
+    suburb: ''
   }
 }
 
@@ -41,7 +44,8 @@ const errors = ref({
   confirmPassword: null,
   resident: null,
   gender: null,
-  reason: null
+  reason: null,
+  suburb: null
 })
 
 const validateName = (blur) => {
@@ -91,6 +95,18 @@ const validateReason = () => {
     reasonMessage.value = 'Great to have a friend'
   } else {
     reasonMessage.value = null
+  }
+}
+const validateSuburb = (blur) => {
+  const val = formData.value.suburb.trim()
+  const ok = /^[A-Za-z\s-]{3,}$/.test(val)
+
+  if (!val) {
+    if (blur) errors.value.suburb = 'Suburb is required.'
+  } else if (!ok) {
+    if (blur) errors.value.suburb = 'Please enter at least 3 letters (letters, spaces or hyphens only).'
+  } else {
+    errors.value.suburb = null
   }
 }
 </script>
@@ -188,6 +204,21 @@ const validateReason = () => {
             <div v-if="reasonMessage" class="text-success mt-1">{{ reasonMessage }}</div>
           </div>
 
+          <!-- Suburb -->
+          <div class="mb-3">
+            <label for="suburb" class="form-label">Suburb</label>
+            <input
+              type="text"
+              class="form-control"
+              id="suburb"
+              v-model.trim="formData.suburb"
+              @input="() => validateSuburb(false)"
+              @blur="() => validateSuburb(true)"
+              placeholder="e.g., Clayton"
+            />
+            <div v-if="errors.suburb" class="text-danger mt-1">{{ errors.suburb }}</div>
+          </div>
+
           <!-- Buttons -->
           <div class="text-center">
             <button type="submit" class="btn btn-primary me-2">Submit</button>
@@ -200,12 +231,13 @@ const validateReason = () => {
 
   <div class="row mt-5">
     <h4>Primevue Datatable</h4>
-    <DataTable :value="submittedCards" tableStyle="min-width: 50tm">
+    <DataTable :value="submittedCards" tableStyle="min-width: 50rem">
       <Column field="username" header="Username"></Column>
       <Column field="password" header="Password"></Column>
       <Column field="isAustralian" header="Australian Resident"></Column>
       <Column field="gender" header="Gender"></Column>
       <Column field="reason" header="Reason"></Column>
+      <Column field="suburb" header="Suburb"></Column>
     </DataTable>
   </div>
 
@@ -214,10 +246,10 @@ const validateReason = () => {
       <div
         v-for="(card, index) in submittedCards"
         :key="index"
-        class="card m-2"
+        class="app-card m-2"
         style="width: 18rem"
       >
-        <div class="card-header">User Information</div>
+        <div class="app-card-header">User Information</div>
         <ul class="list-group list-group-flush">
           <li class="list-group-item">Username: {{ card.username }}</li>
           <li class="list-group-item">Password: {{ card.password }}</li>
@@ -226,6 +258,7 @@ const validateReason = () => {
           </li>
           <li class="list-group-item">Gender: {{ card.gender }}</li>
           <li class="list-group-item">Reason: {{ card.reason }}</li>
+          <li class="list-group-item">Suburb: {{ card.suburb }}</li>
         </ul>
       </div>
     </div>
