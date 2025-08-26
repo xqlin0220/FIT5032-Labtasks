@@ -284,19 +284,8 @@ const validateSuburb = (blur) => {
 /* ID selectors */
 #username:focus,
 #password:focus,
-#isAustralian:focus,
-.card {
-  border: 1px solid #ccc;
-  border-radius: 10px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-}
-.card-header {
-  background-color: #275fda;
-  color: white;
-  padding: 10px;
-  border-radius: 10px 10px 0 0;
-}
-.list-group-item {
-  padding: 10px;
+#isAustralian:focus {
+  border: 1px solid #275fda;
+  box-shadow: 0 0 0 0.2rem rgba(39,95,218,.15);
 }
 </style>
