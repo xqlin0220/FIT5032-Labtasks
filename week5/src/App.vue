@@ -1,16 +1,14 @@
 <script setup>
 import JSONLab from './components/JSONLab.vue'
 import BHeader from './components/BHeader.vue'
-import LibraryRegistrationForm from './views/HomeView.vue'
+import HomeView from './views/HomeView.vue'
 </script>
 
 <template>
-  <header>
-    <BHeader />
-    <main class="container py-4 app-container">
-      <router-view/>
-    </main>
-  </header>
+  <BHeader />
+  <main class="container py-4 app-container">
+    <router-view/>
+  </main>
 </template>
 
 <style>

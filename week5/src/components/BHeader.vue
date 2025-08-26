@@ -12,10 +12,36 @@
         <li class="nav-item">
           <router-link to="/about" class="nav-link" active-class="active">About</router-link>
         </li>
+        <li class="nav-item">
+          <router-link to="/login" class="nav-link" active-class="active">Login</router-link>
+        </li>
       </ul>
     </header>
   </div>
 </template>
+
+<script setup>
+import { computed } from 'vue'
+import { useRouter } from 'vue-router'
+import { isAuthenticated, currentUser, logout } from '../stores/auth'
+
+const router = useRouter()
+const doLogout = () => {
+  logout()
+  router.push('/login')
+}
+
+const currentUserText = computed(() => currentUser.value || '')
+</script>
+
+<script>
+export default {
+  computed: {
+    isAuthenticated() { return isAuthenticated.value },
+    currentUser() { return (this.$options.setup && null) || (this.$.setupState?.currentUserText ?? '') }
+  }
+}
+</script>
 
 <style scoped>
 .b-example-divider {
