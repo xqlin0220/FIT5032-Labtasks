@@ -1,54 +1,69 @@
-// src/stores/firebaseAuth.js
 import { ref } from 'vue'
-import { initializeApp } from 'firebase/app'
-import { getAuth, onAuthStateChanged, signOut } from 'firebase/auth'
+import { onAuthStateChanged, signOut } from 'firebase/auth'
+import { doc, getDoc, setDoc } from 'firebase/firestore'
+import { auth, db } from '@/lib/firebaseClient'
 
-// Firebase configuration
-const firebaseConfig = {
-  apiKey: "AIzaSyBKn1hCOuusjch3ShDYYK5h_KaeBbk8yTY",
-  authDomain: "week7-xuqing.firebaseapp.com",
-  projectId: "week7-xuqing",
-  storageBucket: "week7-xuqing.firebasestorage.app",
-  messagingSenderId: "560933900931",
-  appId: "1:560933900931:web:52ebf5a7048bc461f8c1b6",
-  measurementId: "G-DSSWRDJ7C0"
+export const isAuthenticated  = ref(false)
+export const currentUser      = ref(null)
+export const currentUserEmail = ref(null)
+export const currentUserRole  = ref(null) // 'user' | 'admin' | null
+export const loadingUser      = ref(true)
+
+export async function ensureUserDoc(user) {
+  const refDoc = doc(db, 'users', user.uid)
+  const snap = await getDoc(refDoc)
+  if (!snap.exists()) {
+    await setDoc(refDoc, {
+      email: user.email ?? '',
+      displayName: user.displayName ?? '',
+      role: 'user',        
+      createdAt: Date.now(),
+    }, { merge: true })
+  }
 }
 
-// initialize firebase app & auth
-const firebaseApp = initializeApp(firebaseConfig)
-export const auth = getAuth(firebaseApp)
+export async function getUserRole(uid) {
+  const refDoc = doc(db, 'users', uid)
+  const snap = await getDoc(refDoc)
+  if (!snap.exists()) return null
+  return snap.data().role ?? null
+}
 
-// responsive state
-export const isAuthenticated = ref(false)
-export const currentUser = ref(null)
-export const currentUserEmail = ref(null)
-export const loadingUser = ref(true)
+export function waitUntilAuthReady() {
+  return new Promise((resolve) => {
+    const stop = onAuthStateChanged(auth, () => {
+      stop()
+      const t = setInterval(() => {
+        if (!loadingUser.value) { clearInterval(t); resolve() }
+      }, 20)
+    })
+  })
+}
 
-// watch auth state change
-onAuthStateChanged(auth, (user) => {
-  isAuthenticated.value = !!user
-  currentUser.value = user
+export function hasRole(...roles) {
+  const r = currentUserRole.value
+  return r != null && roles.includes(r)
+}
+
+onAuthStateChanged(auth, async (user) => {
+  loadingUser.value = true
+  isAuthenticated.value  = !!user
+  currentUser.value      = user
   currentUserEmail.value = user?.email ?? null
-  loadingUser.value = false
+  currentUserRole.value  = null
 
   if (user) {
-    console.log('[AuthState] Signed in:', {
-      uid: user.uid,
-      email: user.email,
-      displayName: user.displayName,
-      providerData: user.providerData?.map(p => p.providerId)
-    })
-  } else {
-    console.log('[AuthState] Signed out')
+    try {
+      await ensureUserDoc(user)                        
+      currentUserRole.value = await getUserRole(user.uid)
+    } catch (e) {
+      console.error('[AuthState] ensure/load role failed:', e)
+    }
   }
 
-  // For debugging in browser console
-  if (typeof window !== 'undefined') {
-    window.currentUser = user
-  }
+  loadingUser.value = false
 })
 
-// logout function
 export async function logout() {
   await signOut(auth)
 }

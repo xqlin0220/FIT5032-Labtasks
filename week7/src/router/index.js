@@ -1,42 +1,51 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import HomeView from '../views/HomeView.vue'
-import AboutView from '../views/AboutView.vue'
-import LoginView from '../views/LoginView.vue'
-import { isAuthenticated } from '../stores/auth.js'
+import HomeView from '@/views/HomeView.vue'
+import AboutView from '@/views/AboutView.vue'
 import FirebaseRegisterView from '@/views/FirebaseRegisterView.vue'
 import FirebaseSigninView from '@/views/FirebaseSigninView.vue'
 
+import { isAuthenticated, currentUserRole, waitUntilAuthReady } from '@/stores/firebaseAuth'
+
 const routes = [
-  {
-    path: '/',
-    name: 'Home',
-    component: HomeView
-  },
+  { path: '/', name: 'Home', component: HomeView },
   {
     path: '/about',
     name: 'About',
     component: AboutView,
-    meta: { requiresAuth: true}
+    meta: { requiresAuth: true, roles: ['admin'] } 
   },
-  {
-    path: '/login',
-    name: 'Login',
-    component: LoginView
-  },
-  { path: '/signin', name: 'Signin', component: () => import('@/views/FirebaseSigninView.vue') },
-  { path: '/signup', name: 'Signup', component: () => import('@/views/FirebaseRegisterView.vue') },
+  { path: '/signin', name: 'Signin', component: FirebaseSigninView,   meta: { guestOnly: true } },
+  { path: '/signup', name: 'Signup', component: FirebaseRegisterView, meta: { guestOnly: true } },
 ]
 
-const router = createRouter({
-  history: createWebHistory(),
-  routes
-})
-router.beforeEach((to, from, next) => {
-  if (to.meta.requiresAuth && !isAuthenticated.value) {
-    next({ name: 'Login', query: { redirect: to.fullPath } })
-  } else {
-    next()
+const router = createRouter({ history: createWebHistory(), routes })
+
+router.beforeEach(async (to) => {
+  await waitUntilAuthReady()
+  console.log('[Guard]', {
+    to: to.fullPath,
+    requiresAuth: to.meta?.requiresAuth,
+    roles: to.meta?.roles,
+    isAuthenticated: isAuthenticated.value,
+    role: currentUserRole.value,
+  })
+
+  if (to.meta?.guestOnly && isAuthenticated.value) {
+    return { name: currentUserRole.value === 'admin' ? 'About' : 'Home' }
   }
+
+  if (to.meta?.requiresAuth && !isAuthenticated.value) {
+    return { name: 'Signin', query: { redirect: to.fullPath } }
+  }
+
+  if (to.meta?.roles?.length) {
+    const role = currentUserRole.value
+    if (!role || !to.meta.roles.includes(role)) {
+      return { name: 'Home', query: { reason: 'forbidden' } }
+    }
+  }
+
+  return true
 })
 
 export default router

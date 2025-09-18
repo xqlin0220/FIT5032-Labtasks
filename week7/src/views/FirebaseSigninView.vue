@@ -13,7 +13,9 @@
         <input id="password" type="password" class="form-control" v-model="password" required />
       </div>
 
-      <button type="submit" class="btn btn-primary w-100">Login</button>
+      <button type="submit" class="btn btn-primary w-100" :disabled="loading">
+        {{ loading ? 'Logging in...' : 'Login' }}
+      </button>
 
       <p v-if="error" class="text-danger mt-3">{{ error }}</p>
     </form>
@@ -23,28 +25,39 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
-import { getAuth, signInWithEmailAndPassword } from 'firebase/auth'
+import { signInWithEmailAndPassword } from 'firebase/auth'
+import { auth } from '@/lib/firebaseClient'
+import { getUserRole, currentUserRole } from '@/stores/firebaseAuth'
 
 const router = useRouter()
 const route = useRoute()
 
 const email = ref('')
 const password = ref('')
-const error = ref('')
-const auth = getAuth()
+const error = ref<string | null>(null)
+const loading = ref(false)
 
-const handleLogin = () => {
-  error.value = ''
-  signInWithEmailAndPassword(auth, email.value, password.value)
-    .then((cred) => {
-      console.log('[Login] success user:', cred.user) // print user info to console
-      const redirect = (route.query.redirect as string) || '/'
-      router.push(redirect)
-    })
-    .catch((err) => {
-      console.error('Login failed:', err.code, err.message)
-      error.value = err.message
-    })
+const roleToRoute: Record<string, { name: string }> = {
+  admin: { name: 'About' }, 
+  user:  { name: 'Home'  }, 
+}
+
+async function handleLogin() {
+  error.value = null
+  loading.value = true
+  try {
+    const cred = await signInWithEmailAndPassword(auth, email.value, password.value)
+
+    const redirect = route.query.redirect as string | undefined
+    if (redirect) { await router.replace(redirect); return }
+
+    const role = (await getUserRole(cred.user.uid)) ?? currentUserRole.value
+    await router.replace(role && roleToRoute[role] ? roleToRoute[role] : { name: 'Home' })
+  } catch (e: any) {
+    error.value = e?.message ?? 'Login failed'
+  } finally {
+    loading.value = false
+  }
 }
 </script>
 
