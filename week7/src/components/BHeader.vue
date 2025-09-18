@@ -23,7 +23,10 @@
 
       <!-- right side: user info and logout -->
       <div class="position-absolute end-0 top-50 translate-middle-y d-flex align-items-center gap-2 me-3">
-        <span v-if="isAuthenticated" class="text-muted small">Hello, {{ currentUserEmail }}</span>
+        <span v-if="isAuthenticated" class="text-muted small">
+          Hello, {{ currentUserEmail }}
+          <span v-if="currentUserRole"> (role: {{ currentUserRole }})</span>
+        </span>
         <span v-else class="text-muted small">Not signed in</span>
         <button v-if="isAuthenticated" class="btn btn-outline-danger btn-sm" @click="doLogout">Logout</button>
       </div>
@@ -33,7 +36,7 @@
 
 <script setup>
 import { useRouter } from 'vue-router'
-import { isAuthenticated, currentUserEmail, logout } from '@/stores/firebaseAuth' // import store
+import { isAuthenticated, currentUserEmail, currentUserRole, logout } from '@/stores/firebaseAuth' // import store
 
 const router = useRouter()
 const doLogout = async () => {

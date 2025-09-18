@@ -50,8 +50,14 @@ async function handleLogin() {
 
     const redirect = route.query.redirect as string | undefined
     if (redirect) { await router.replace(redirect); return }
+    let role: string | null = null
+    try {
+      role = (await getUserRole(cred.user.uid)) ?? currentUserRole.value
+    } catch (e:any) {
+      console.warn('[Login] getUserRole failed:', e?.message || e)
+    }
+    console.log('[Login] uid=', cred.user.uid, 'role=', role)
 
-    const role = (await getUserRole(cred.user.uid)) ?? currentUserRole.value
     await router.replace(role && roleToRoute[role] ? roleToRoute[role] : { name: 'Home' })
   } catch (e: any) {
     error.value = e?.message ?? 'Login failed'

@@ -14,7 +14,7 @@
       </div>
 
       <button type="submit" class="btn btn-primary w-100" :disabled="loading">
-        {{ loading ? 'Registering…' : 'Register' }}
+        {{ loading ? 'Registering...' : 'Register' }}
       </button>
 
       <p v-if="error" class="text-danger mt-3">{{ error }}</p>
