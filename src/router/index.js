@@ -5,6 +5,7 @@ import FirebaseRegisterView from '@/views/FirebaseRegisterView.vue'
 import FirebaseSigninView from '@/views/FirebaseSigninView.vue'
 import AddBookView from '@/views/AddBookView.vue'
 import GetBookCountView from '@/views/GetBookCountView.vue'
+import WeatherView from '@/views/WeatherView.vue'
 
 import { isAuthenticated, currentUserRole, waitUntilAuthReady } from '@/stores/firebaseAuth'
 
@@ -24,7 +25,8 @@ const routes = [
     component: () => import('@/views/AddBookView.vue'),
     meta: { requiresAuth: true, roles: ['admin', 'user'] } 
   },
-  { path: '/GetBookCount', name: 'GetBookCount', component: GetBookCountView }
+  { path: '/GetBookCount', name: 'GetBookCount', component: GetBookCountView },
+  { path: '/WeatherCheck', name: 'WeatherCheck', component: WeatherView }
 ]
 
 const router = createRouter({ history: createWebHistory(), routes })
