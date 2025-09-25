@@ -26,6 +26,9 @@
         <li v-if="!isAuthenticated" class="nav-item">
           <router-link to="/WeatherCheck" class="nav-link" active-class="active">Get Weather</router-link>
         </li>
+        <li v-if="!isAuthenticated" class="nav-item">
+          <router-link to="/getAllBookAPI" class="nav-link" active-class="active">Get All Book</router-link>
+        </li>
 
         <!-- already logged in -->
       </ul>

@@ -33,3 +33,16 @@ exports.capitalizeBookOnCreate = onDocumentCreated("books/{docId}",
         await snap.ref.update(updates);
       }
     });
+
+exports.getAllBooks = onRequest((req, res) => {
+  cors(req, res, async () => {
+    try {
+      const snap = await admin.firestore().collection("books").get();
+      const books = snap.docs.map((d) => ({id: d.id, ...d.data()}));
+      res.status(200).json(books);
+    } catch (e) {
+      console.error("getAllBooks error:", e);
+      res.status(500).send("Failed to fetch books");
+    }
+  });
+});
